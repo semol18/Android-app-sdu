@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <TextView
+            android:id="@+id/list_symbol"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="$GME"
+            android:padding="5dp">
+        </TextView>
+
+        <TextView
+            android:id="@+id/list_price"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="160.3"
+            android:padding="5dp">
+        </TextView>
+
+        <TextView
+            android:id="@+id/list_change"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="+4.01"
+            android:padding="5dp">
+        </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/list_timestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Wed May 05 19:03:11 GMT+02:00 2021"
+            android:textSize="10dp">
+        </TextView>
+    </LinearLayout>
+
+</LinearLayout>
