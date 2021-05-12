@@ -48,7 +48,7 @@ class StockOverviewFragment : Fragment() {
 
         val array: Array<IStock> = arrayOf(Stock("\$GME", "Test", tempPrice), Stock("\$GME2", "Test2", tempPrice), Stock("\$GME3", "Test3", tempPrice));
 
-        val adapter: MyStockRecyclerViewAdapter = MyStockRecyclerViewAdapter(array) { stock ->
+        val adapter: MyStockRecyclerViewAdapter = MyStockRecyclerViewAdapter(array) { stock: IStock ->
             onAdapterClicked(stock)
         };
 

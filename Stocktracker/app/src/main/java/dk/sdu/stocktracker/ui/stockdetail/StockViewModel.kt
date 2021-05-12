@@ -24,6 +24,10 @@ class StockViewModel : ViewModel() {
         }
     }));
 
+    constructor() {
+        //TODO: add api call
+    }
+
     fun getStock() : LiveData<IStock> {
         return this.stock;
     }
