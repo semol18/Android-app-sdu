@@ -13,6 +13,9 @@ interface IStockEntityDAO {
     @Delete
     fun removeStock(stock: StockEntity)
 
+    @Query("SELECT * FROM stock WHERE symbol = :symbol")
+    fun getStock(symbol: String) : StockEntity
+
     @Query("SELECT * FROM stock")
     fun getStocks() : Array<StockEntity>
 }

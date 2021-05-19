@@ -5,5 +5,6 @@ import dk.sdu.stocktracker.api.IStock
 interface IStockStorage {
     fun saveStock(stock: IStock);
     fun deleteStock(stock: IStock);
+    fun getStockBySymbol(symbol: String);
     fun getAllStock() : Array<IStock>;
 }

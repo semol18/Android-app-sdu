@@ -9,7 +9,7 @@ import dk.sdu.stocktracker.api.storage.IStockStorage
 
 @Database(entities = [StockEntity::class], version = 1)
 abstract class LocalStockStorage : IStockStorage, RoomDatabase() {
-    abstract fun stockDao(): IStockEntityDAO
+    internal abstract fun stockDao(): IStockEntityDAO
 
     companion object {
         private lateinit var INSTANCE: LocalStockStorage;
@@ -27,6 +27,10 @@ abstract class LocalStockStorage : IStockStorage, RoomDatabase() {
     override fun deleteStock(stock: IStock) {
         stockDao().removeStock(stockToStockEntity(stock))
     }
+
+    override fun getStockBySymbol(symbol: String) : IStock {
+       return stockDao().getStock(symbol);
+    }
     override fun getAllStock() : Array<IStock> {
         //stockDao().getStocks();
         //TODO: Implement a way to get a list of all stocks. This may have serious performance issues since we would currently require one api call for each stock.
@@ -36,5 +40,9 @@ abstract class LocalStockStorage : IStockStorage, RoomDatabase() {
     private fun stockToStockEntity(stock: IStock) : StockEntity {
         var stockEntity = StockEntity(stock.getSymbol());
         return stockEntity;
+    }
+
+    private fun stockEntityToIStock(stock: StockEntity) : IStock {
+        //TODO: Implement api call
     }
 }

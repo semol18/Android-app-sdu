@@ -48,6 +48,32 @@ class LocalStockStorageTest {
         assert(daoContainsNoStock());
     }
 
+    @Test
+    fun preventDuplicatedStock() {
+        var stock = createStock("GME");
+
+        localStorage.saveStock(stock);
+
+        assert(daoContainsStock(stock));
+
+        localStorage.saveStock(stock);
+
+        assert(localStorage.stockDao().getStocks().size === 1);
+    }
+
+    @Test
+    fun deleteNonExistingStock() {
+        var stock = createStock("GME");
+
+        localStorage.saveStock(stock);
+
+        assert(daoContainsStock(stock));
+
+        var nonExistingStock = createStock("noGME");
+
+        localStorage.deleteStock(nonExistingStock);
+    }
+
     private fun createStock(symbol: String) : IStock {
         var stock = mockk<IStock>();
         every {stock.getSymbol()} returns symbol;
