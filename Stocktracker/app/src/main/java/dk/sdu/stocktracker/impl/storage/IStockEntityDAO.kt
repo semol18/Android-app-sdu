@@ -1,9 +1,6 @@
 package dk.sdu.stocktracker.impl.storage
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 
 @Dao
 interface IStockEntityDAO {
