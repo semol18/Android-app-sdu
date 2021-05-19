@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
 import dk.sdu.stocktracker.R
 import dk.sdu.stocktracker.api.IPrice
@@ -13,6 +14,7 @@ import dk.sdu.stocktracker.api.IStock
 import dk.sdu.stocktracker.impl.Stock
 import dk.sdu.stocktracker.ui.stockdetail.StockDetailFragment
 import dk.sdu.stocktracker.ui.stockdetail.StockViewModel
+import dk.sdu.stocktracker.ui.stocksearch.SearchStockFragment
 import java.util.*
 
 class StockOverviewFragment : Fragment() {
@@ -58,6 +60,10 @@ class StockOverviewFragment : Fragment() {
 
         this.root = root;
 
+        val button: Button = root.findViewById(R.id.addStock);
+
+        button.setOnClickListener { onButtonClicked() }
+
 
         return root;
     }
@@ -74,6 +80,14 @@ class StockOverviewFragment : Fragment() {
 
         activity?.supportFragmentManager?.beginTransaction()
             ?.replace(R.id.container, StockDetailFragment.newInstance())
+            ?.setReorderingAllowed(true)
+            ?.addToBackStack("StockOverview")
+            ?.commit()
+    }
+
+    private fun onButtonClicked() {
+        activity?.supportFragmentManager?.beginTransaction()
+            ?.replace(R.id.container, SearchStockFragment.newInstance())
             ?.setReorderingAllowed(true)
             ?.addToBackStack("StockOverview")
             ?.commit()
