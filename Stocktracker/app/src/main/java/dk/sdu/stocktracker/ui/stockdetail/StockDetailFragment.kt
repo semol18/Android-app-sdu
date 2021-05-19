@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import dk.sdu.stocktracker.R
+import dk.sdu.stocktracker.StockOverview
 import dk.sdu.stocktracker.api.IPrice
+import dk.sdu.stocktracker.databinding.StockDetailFragmentBinding
 
 class StockDetailFragment : Fragment() {
 
@@ -16,6 +18,7 @@ class StockDetailFragment : Fragment() {
         fun newInstance() = StockDetailFragment()
     }
 
+    private lateinit var binding: StockDetailFragmentBinding
     private lateinit var viewModel: StockViewModel
 
     override fun onCreateView(
@@ -24,12 +27,13 @@ class StockDetailFragment : Fragment() {
     ): View {
         viewModel = ViewModelProvider(requireActivity()).get(StockViewModel::class.java)
 
-        val root = inflater.inflate(R.layout.stock_detail_fragment, container, false)
+        binding = StockDetailFragmentBinding.inflate(inflater, container, false)
+        val view = binding.root
 
-        val stockName: TextView = root.findViewById(R.id.ticketName);
-        val priceText: TextView = root.findViewById(R.id.valueText);
-        val timestamp: TextView = root.findViewById(R.id.updateTimeStamp);
-        val priceDiff: TextView = root.findViewById(R.id.differenceText);
+        val stockName: TextView = binding.ticketName
+        val priceText: TextView = binding.valueText
+        val timestamp: TextView = binding.updateTimeStamp
+        val priceDiff: TextView = binding.differenceText
 
             viewModel.getStock().observe(viewLifecycleOwner, {
                 stockName.text = it.getName();
@@ -39,8 +43,7 @@ class StockDetailFragment : Fragment() {
                 timestamp.text = price.getTimeStamp().toString();
                 priceDiff.text = price.getChange().toString()
             });
-
-        return root;
+        return view
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

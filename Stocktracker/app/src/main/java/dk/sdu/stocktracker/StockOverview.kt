@@ -2,6 +2,7 @@ package dk.sdu.stocktracker
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import dk.sdu.stocktracker.databinding.StockOverviewActivityBinding
 import dk.sdu.stocktracker.ui.stockoverview.StockOverviewFragment
 
 class StockOverview : AppCompatActivity() {
