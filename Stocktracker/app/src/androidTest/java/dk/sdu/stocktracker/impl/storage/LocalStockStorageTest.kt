@@ -77,6 +77,7 @@ class LocalStockStorageTest {
     private fun createStock(symbol: String) : Stock {
         var stock = mockk<Stock>();
         every {stock.symbol} returns symbol;
+        every {stock.name} returns symbol;
         return stock;
     }
 

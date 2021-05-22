@@ -1,41 +1,34 @@
 package dk.sdu.stocktracker.impl
 
-import dk.sdu.stocktracker.api.IStockAPI
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 import org.junit.Test
 
-import org.junit.Assert.*
 import java.util.*
 
 class StockAPITest {
 
     @Test
-    fun searchStockThatDoesNotExist() {
-        var api: IStockAPI = StockAPI.getInstance();
-        val result = api.searchStock("APPLE INC");
-        assertFalse(result!!.name.equals("APPLE INC"))
+    fun searchStock() {
+        assert(StockAPI.getInstance().searchStock("GameStop")[0].symbol == "GME");
     }
 
     @Test
-    fun searchStockThatExists() {
-        var api: IStockAPI = StockAPI.getInstance();
-        val result = api.searchStock("AAPL");
-        assertTrue(result!!.symbol == "AAPL")
-    }
+    fun getPrice() = runBlocking {
+        val price = StockAPI.getInstance().getPrice("GME");
 
-    @Test
-    fun updateStock() {
-        /*var api: IStockAPI = StockAPI();
-        val stock = api.updateStock("GME");
-        assert(stock.getSymbol() == "GME");
-        assert(stock.getPrice().getPrice() != 0.0);
-        assert(stock.getPrice().getTimeStamp().before(Date()));*/
-    }
-
-    @Test
-    fun getPrice() {
-        var api: IStockAPI = StockAPI.getInstance();
-        val price = api.getPrice("GME");
-        assert(price.getTimeStamp().before(Date()));
-        assert(price.getPrice() != 0.0)
+        try {
+            runBlocking {
+                price.collect {
+                    if (it != null) {
+                        assert(it.getTimeStamp().before(Date()));
+                        assert(it.getPrice() > 0.0);
+                        this.coroutineContext.job.cancelAndJoin();
+                    }
+                }
+            }
+        } catch (ex: Exception) {
+            assert(true);
+        }
     }
 }

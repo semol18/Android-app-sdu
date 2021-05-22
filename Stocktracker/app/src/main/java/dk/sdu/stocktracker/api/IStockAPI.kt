@@ -7,8 +7,3 @@ interface IStockAPI {
     fun searchStock(searchString: String) : Array<Stock>;
     fun getPrice(symbol: String) : Flow<IPrice?>;
 }
-
-interface ISearchStockResult {
-    fun getResult() : Boolean;
-    fun getStock() : Stock;
-}

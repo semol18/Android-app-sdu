@@ -1,7 +1,6 @@
 package dk.sdu.stocktracker.impl
 
 import dk.sdu.stocktracker.api.IPrice
-import dk.sdu.stocktracker.api.ISearchStockResult
 import dk.sdu.stocktracker.api.IStockAPI
 import okhttp3.OkHttpClient
 import okhttp3.Request
