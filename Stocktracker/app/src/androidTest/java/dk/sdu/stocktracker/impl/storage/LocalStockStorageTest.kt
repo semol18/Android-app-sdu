@@ -1,7 +1,7 @@
 package dk.sdu.stocktracker.impl.storage
 
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
-import dk.sdu.stocktracker.api.IStock
+import dk.sdu.stocktracker.impl.Stock
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.After
@@ -74,16 +74,16 @@ class LocalStockStorageTest {
         localStorage.deleteStock(nonExistingStock);
     }
 
-    private fun createStock(symbol: String) : IStock {
-        var stock = mockk<IStock>();
-        every {stock.getSymbol()} returns symbol;
+    private fun createStock(symbol: String) : Stock {
+        var stock = mockk<Stock>();
+        every {stock.symbol} returns symbol;
         return stock;
     }
 
-    private fun daoContainsStock(stock: IStock) : Boolean {
+    private fun daoContainsStock(stock: Stock) : Boolean {
         var stocks = localStorage.stockDao().getStocks();
 
-        return stocks[0].symbol == stock.getSymbol();
+        return stocks[0].symbol == stock.symbol;
     }
 
     private fun daoContainsNoStock() : Boolean {

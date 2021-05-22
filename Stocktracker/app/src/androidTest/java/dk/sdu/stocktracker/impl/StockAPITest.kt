@@ -10,17 +10,16 @@ class StockAPITest {
 
     @Test
     fun searchStockThatDoesNotExist() {
-        var api: IStockAPI = StockAPI();
-        val result = api.searchStock("AAPLE");
-        assertFalse(result.getResult())
+        var api: IStockAPI = StockAPI.getInstance();
+        val result = api.searchStock("APPLE INC");
+        assertFalse(result!!.name.equals("APPLE INC"))
     }
 
     @Test
     fun searchStockThatExists() {
-        var api: IStockAPI = StockAPI();
+        var api: IStockAPI = StockAPI.getInstance();
         val result = api.searchStock("AAPL");
-        assertTrue(result.getResult())
-        assertNotNull(result.getStock())
+        assertTrue(result!!.symbol == "AAPL")
     }
 
     @Test
@@ -30,5 +29,13 @@ class StockAPITest {
         assert(stock.getSymbol() == "GME");
         assert(stock.getPrice().getPrice() != 0.0);
         assert(stock.getPrice().getTimeStamp().before(Date()));*/
+    }
+
+    @Test
+    fun getPrice() {
+        var api: IStockAPI = StockAPI.getInstance();
+        val price = api.getPrice("GME");
+        assert(price.getTimeStamp().before(Date()));
+        assert(price.getPrice() != 0.0)
     }
 }

@@ -1,24 +1,33 @@
 package dk.sdu.stocktracker.ui.stocksearch
 
 import android.os.Handler
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import dk.sdu.stocktracker.api.ILocalStockStorage
+import androidx.lifecycle.ViewModelProvider
 import dk.sdu.stocktracker.api.IStockAPI
-import dk.sdu.stocktracker.impl.LocalStockStorage
+import dk.sdu.stocktracker.api.storage.IStockStorage
+import dk.sdu.stocktracker.impl.Stock
 import dk.sdu.stocktracker.impl.StockAPI
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class SearchStockViewModel : ViewModel() {
-    private val stockAPI : IStockAPI = StockAPI();
-    private val localStockStorage: ILocalStockStorage = LocalStockStorage();
+    private val stockAPI: IStockAPI = StockAPI.getInstance();
+    private val stocks = MutableLiveData<Array<Stock>>();
 
-    fun onSearch(text: String, handler: Handler) {
-        val result = stockAPI.searchStock(text);
+    fun onSearch(text: String) {
+        val job = Job();
+        val scope = CoroutineScope(Dispatchers.IO + job);
 
-        if (result.getResult()) {
-            //localStockStorage.saveStock(result.getStock());
-            handler.sendEmptyMessage(1);
+        scope.launch {
+            stocks.postValue(stockAPI.searchStock(text));
         }
+    }
 
-        handler.sendEmptyMessage(0);
+    fun getStocks(): LiveData<Array<Stock>> {
+        return stocks;
     }
 }

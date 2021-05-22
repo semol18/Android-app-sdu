@@ -13,7 +13,7 @@
             android:id="@+id/list_symbol"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="$GME"
+            android:text=""
             android:padding="5dp">
         </TextView>
 
@@ -21,7 +21,7 @@
             android:id="@+id/list_price"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="160.3"
+            android:text=""
             android:padding="5dp">
         </TextView>
 
@@ -29,7 +29,7 @@
             android:id="@+id/list_change"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="+4.01"
+            android:text=""
             android:padding="5dp">
         </TextView>
     </LinearLayout>
@@ -42,7 +42,7 @@
             android:id="@+id/list_timestamp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Wed May 05 19:03:11 GMT+02:00 2021"
+            android:text=""
             android:textSize="10dp">
         </TextView>
     </LinearLayout>

@@ -1,21 +1,20 @@
 package dk.sdu.stocktracker.ui.stocksearch
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.os.Message
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import dk.sdu.stocktracker.R
+import dk.sdu.stocktracker.impl.Stock
+import dk.sdu.stocktracker.impl.storage.LocalStockStorage
 import dk.sdu.stocktracker.ui.stockoverview.StockOverviewFragment
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+
 
 class SearchStockFragment : Fragment() {
 
@@ -31,30 +30,37 @@ class SearchStockFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         this.root = inflater.inflate(R.layout.search_stock_fragment, container, false);
+
+        val adapter =
+            SearchStockRecyclerViewAdapter(emptyArray()) { stock: Stock ->
+                onAdapterClicked(stock)
+            };
+
+        val list: RecyclerView = root.findViewById(R.id.searchStockList);
+
+        list.adapter = adapter;
+
         return root;
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(SearchStockViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity()).get(SearchStockViewModel::class.java);
         var button: Button = root.findViewById(R.id.searchStockButton);
         var textEdit: EditText = root.findViewById(R.id.editTextSymbol);
-        button.setOnClickListener{
+        button.setOnClickListener {
+            viewModel.onSearch(textEdit.text.toString());
+        }
 
-            var handler: Handler = object: Handler(Looper.getMainLooper()){
-                @Override
-                override fun handleMessage(msg: Message) {
-                    if (msg.what == 1) {
-                        onSearchReturn(true);
-                    } else {
-                        onSearchReturn(false);
-                    }
-                }
-            }
+        viewModel.getStocks().observe(viewLifecycleOwner) {
+            val adapter =
+                SearchStockRecyclerViewAdapter(it) { stock: Stock ->
+                    onAdapterClicked(stock)
+                };
 
-            Thread{
-                viewModel.onSearch(textEdit.text.toString(), handler)
-            }.start();
+            val list: RecyclerView = root.findViewById(R.id.searchStockList);
+
+            list.adapter = adapter;
         }
     }
 
@@ -68,6 +74,15 @@ class SearchStockFragment : Fragment() {
             var errorTextView: TextView = root.findViewById(R.id.searchErrorTextView);
             errorTextView.text = "Could not find any stock information on the provided symbol"
         }
+    }
+
+    private fun onAdapterClicked(stock: Stock) {
+        LocalStockStorage.getInstance(requireContext()).saveStock(stock);
+
+        activity?.supportFragmentManager?.beginTransaction()
+            ?.replace(R.id.container, StockOverviewFragment.newInstance())
+            ?.setReorderingAllowed(true)
+            ?.commit()
     }
 
 }
