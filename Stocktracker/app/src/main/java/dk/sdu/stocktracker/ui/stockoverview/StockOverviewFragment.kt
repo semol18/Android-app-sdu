@@ -6,14 +6,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
 import dk.sdu.stocktracker.R
-import dk.sdu.stocktracker.api.IPrice
-import dk.sdu.stocktracker.api.IStock
 import dk.sdu.stocktracker.impl.Stock
+import dk.sdu.stocktracker.impl.storage.LocalStockStorage
 import dk.sdu.stocktracker.ui.stockdetail.StockDetailFragment
 import dk.sdu.stocktracker.ui.stockdetail.StockViewModel
-import java.util.*
+import dk.sdu.stocktracker.ui.stocksearch.SearchStockFragment
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 
 class StockOverviewFragment : Fragment() {
 
@@ -31,49 +34,57 @@ class StockOverviewFragment : Fragment() {
 
         val root = inflater.inflate(R.layout.stock_overview_fragment, container, false);
 
-        val tempPrice: IPrice = object:
-            IPrice {
-            override fun getPrice(): Double {
-                return 160.30;
-            }
-
-            override fun getTimeStamp(): Date {
-                return Date();
-            }
-
-            override fun getChange(): Double {
-                return 4.01;
-            }
-        }
-
-        val array: Array<IStock> = arrayOf(Stock("\$GME", "Test", tempPrice), Stock("\$GME2", "Test2", tempPrice), Stock("\$GME3", "Test3", tempPrice));
-
-        val adapter: MyStockRecyclerViewAdapter = MyStockRecyclerViewAdapter(array) { stock: IStock ->
-            onAdapterClicked(stock)
-        };
-
-        val list: RecyclerView = root.findViewById(R.id.stockList);
-
-        list.adapter = adapter;
-
         this.root = root;
 
+        val button: Button = root.findViewById(R.id.addStock);
+
+        button.setOnClickListener { onButtonClicked() }
+
+        val stockFlow: Flow<Array<Stock>> = LocalStockStorage.getInstance(requireContext()).getAllStock();
+        updateStockRecyclerViewAdapter(stockFlow);
 
         return root;
     }
 
+    private fun updateStockRecyclerViewAdapter(stockFlow: Flow<Array<Stock>>) {
+        val job = Job();
+        val scope = CoroutineScope(Dispatchers.Main + job);
+
+        scope.launch {
+            stockFlow.collect {
+                val adapter =
+                    StockRecyclerViewAdapter(it) { stock: Stock ->
+                        onAdapterClicked(stock)
+                    };
+
+                val list: RecyclerView = root.findViewById(R.id.stockList);
+
+                list.adapter = adapter;
+            }
+        }
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(StockOverviewViewModel::class.java)
+        viewModel = ViewModelProvider(this, StockOverviewViewModelFactory(LocalStockStorage.getInstance(requireContext()))).get(
+            StockOverviewViewModel::class.java)
         // TODO: Use the ViewModel
     }
 
-    private fun onAdapterClicked(stock: IStock) {
+    private fun onAdapterClicked(stock: Stock) {
         val viewModel = ViewModelProvider(requireActivity()).get(StockViewModel::class.java);
         viewModel.setStock(stock);
 
         activity?.supportFragmentManager?.beginTransaction()
             ?.replace(R.id.container, StockDetailFragment.newInstance())
+            ?.setReorderingAllowed(true)
+            ?.addToBackStack("StockOverview")
+            ?.commit()
+    }
+
+    private fun onButtonClicked() {
+        activity?.supportFragmentManager?.beginTransaction()
+            ?.replace(R.id.container, SearchStockFragment.newInstance())
             ?.setReorderingAllowed(true)
             ?.addToBackStack("StockOverview")
             ?.commit()

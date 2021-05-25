@@ -7,6 +7,15 @@
     android:layout_height="match_parent"
     tools:context=".ui.stockdetail.StockDetailFragment">
 
+    <Button
+        android:id="@+id/buttonRemoveStock"
+        android:layout_width="409dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="Remove Stock"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="0dp"
@@ -18,22 +27,11 @@
         tools:src="@tools:sample/backgrounds/scenic" />
 
     <TextView
-        android:id="@+id/ticketName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="GameStop Corp. (GME)"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.027" />
-
-    <TextView
         android:id="@+id/updateTimeStamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text="12:00 PM"
+        android:text=""
         app:layout_constraintStart_toStartOf="@+id/valueText"
         app:layout_constraintTop_toBottomOf="@+id/valueText" />
 
@@ -43,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
         android:layout_marginBottom="5dp"
-        android:text="+4.01"
+        android:text=""
         app:layout_constraintBottom_toTopOf="@+id/updateTimeStamp"
         app:layout_constraintStart_toEndOf="@+id/updateTimeStamp" />
 
@@ -53,8 +51,19 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="50dp"
-        android:text="160"
+        android:text=""
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/ticketName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.027" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

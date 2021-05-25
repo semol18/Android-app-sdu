@@ -83,3 +83,5 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+Stocktracker/.idea/misc.xml
+Stocktracker/.idea/compiler.xml

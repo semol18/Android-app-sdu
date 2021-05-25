@@ -6,9 +6,21 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import dk.sdu.stocktracker.R
 import dk.sdu.stocktracker.api.IPrice
+import dk.sdu.stocktracker.api.storage.IStockStorage
+import dk.sdu.stocktracker.databinding.StockDetailFragmentBinding
+import dk.sdu.stocktracker.impl.StockAPI
+import dk.sdu.stocktracker.impl.storage.LocalStockStorage
+import dk.sdu.stocktracker.ui.stockoverview.StockOverviewFragment
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class StockDetailFragment : Fragment() {
 
@@ -16,6 +28,7 @@ class StockDetailFragment : Fragment() {
         fun newInstance() = StockDetailFragment()
     }
 
+    private lateinit var binding: StockDetailFragmentBinding
     private lateinit var viewModel: StockViewModel
 
     override fun onCreateView(
@@ -24,27 +37,50 @@ class StockDetailFragment : Fragment() {
     ): View {
         viewModel = ViewModelProvider(requireActivity()).get(StockViewModel::class.java)
 
-        val root = inflater.inflate(R.layout.stock_detail_fragment, container, false)
+        binding = StockDetailFragmentBinding.inflate(inflater, container, false)
+        val view = binding.root
 
-        val stockName: TextView = root.findViewById(R.id.ticketName);
-        val priceText: TextView = root.findViewById(R.id.valueText);
-        val timestamp: TextView = root.findViewById(R.id.updateTimeStamp);
-        val priceDiff: TextView = root.findViewById(R.id.differenceText);
+        val stockName: TextView = binding.ticketName
+        val priceText: TextView = binding.valueText
+        val timestamp: TextView = binding.updateTimeStamp
+        val priceDiff: TextView = binding.differenceText
 
-            viewModel.getStock().observe(viewLifecycleOwner, {
-                stockName.text = it.getName();
+        viewModel.getStock().observe(viewLifecycleOwner, { stock ->
+            if (stock != null) {
 
-                val price: IPrice = it.getPrice();
-                priceText.text = price.getPrice().toString();
-                timestamp.text = price.getTimeStamp().toString();
-                priceDiff.text = price.getChange().toString()
-            });
+                stockName.text = stock?.name
 
-        return root;
-    }
+                val job = Job();
+                val scope = CoroutineScope(Dispatchers.Main + job);
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+                val price: Flow<IPrice?> = stock.getPrice(StockAPI.getInstance());
+                scope.launch {
+                    price.collect {
+                        if (it != null) {
+                            priceText.text = it.getPrice().toString();
+                            timestamp.text = it.getTimeStamp().toString();
+                            priceDiff.text = it.getChange().toString()
+                        }
+                    }
+                }
+            }
+        });
+
+        val removeStockButton: Button = binding.buttonRemoveStock;
+        removeStockButton.setOnClickListener{
+            val stockStorage : IStockStorage = LocalStockStorage.getInstance(requireContext());
+            val stock = viewModel.getStock().value;
+            if (stock != null) {
+                stockStorage.deleteStock(stock);
+
+                activity?.supportFragmentManager?.beginTransaction()
+                    ?.replace(R.id.container, StockOverviewFragment.newInstance())
+                    ?.setReorderingAllowed(true)
+                    ?.commit()
+            }
+        }
+
+        return view
     }
 
 }

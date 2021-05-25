@@ -1,28 +1,19 @@
 package dk.sdu.stocktracker.impl
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import dk.sdu.stocktracker.api.IPrice
-import dk.sdu.stocktracker.api.IStock
+import dk.sdu.stocktracker.api.IStockAPI
+import kotlinx.coroutines.flow.Flow
 
-class Stock : IStock {
-    private val _symbol: String;
-    private val _name: String;
-    private val _price: IPrice;
+@Entity(tableName = "stock")
+data class Stock(
+    @PrimaryKey val symbol: String,
+    val name: String,
+) {
 
-    constructor(symbol: String, name: String, price: IPrice) {
-        this._symbol = symbol;
-        this._name = name;
-        this._price = price;
+    fun getPrice(stockAPI: IStockAPI): Flow<IPrice?> {
+        return stockAPI.getPrice(this.symbol);
     }
 
-    override fun getPrice(): IPrice {
-        return this._price;
-    }
-
-    override fun getSymbol(): String {
-        return this._symbol;
-    }
-
-    override fun getName(): String {
-        return this._name;
-    }
 }
